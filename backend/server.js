@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./User');
-const admin=require('./admin');
-const Book=require('./Booking')
+const admin = require('./admin');
+const Book = require('./Booking')
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const cors = require("cors");
@@ -31,69 +31,69 @@ mongoose.connect(dbURI)
     app.listen(3000)
     console.log("Db connected")
     console.log("Listening to port")
-    
+
   })
   .catch(err => console.log(err));
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-app.get('/add',(req,res)=>{
-  const user=new User({  //user is a document
-    email:"mathi@gmail.com",
-    name:"mathi",
-    password:"12345"
+app.get('/add', (req, res) => {
+  const user = new User({  //user is a document
+    email: "mathi@gmail.com",
+    name: "mathi",
+    password: "12345"
   })
   user.save()
-     .then((result)=>res.send(result))
-     .catch((err)=>console.log(err))
+    .then((result) => res.send(result))
+    .catch((err) => console.log(err))
 
-  
-   
+
+
 })
 
 
-app.get('/get',(req,res)=>{
+app.get('/get', (req, res) => {
   User.find()
-      .then((result)=>{
-        res.send(result)
-        })
-      .catch((err)=>console.log(err))
+    .then((result) => {
+      res.send(result)
+    })
+    .catch((err) => console.log(err))
 })
 // app.get('./get-admin',(req,res)=>{
 //   admin.find()
 //        .then((result)=>res.send(result))
 //        .catch((err)=>console.log(err))
 // })
-app.get('/get-book',(req,res)=>{
+app.get('/get-book', (req, res) => {
   Book.find()
-       .then((result)=>{
-        res.send(result)
-       })
-       .catch((err)=>console.log(err))
+    .then((result) => {
+      res.send(result)
+    })
+    .catch((err) => console.log(err))
 })
-app.post('/add-user',(req,res)=>{
+app.post('/add-user', (req, res) => {
   const data = req.body;
-  const {cp,email,password,username}=data;
+  const { cp, email, password, username } = data;
 
-  const user=new User({  //user is a document
-    email:email,
-    name:username,
-    password:password
+  const user = new User({  //user is a document
+    email: email,
+    name: username,
+    password: password
   })
   user.save()
-     .then((result)=>res.send(result))
-     .catch((err)=>console.log(err))
+    .then((result) => res.send(result))
+    .catch((err) => console.log(err))
 
 
-  
-  
+
+
 })
 
 
-app.post('/send-email',(req,res)=>{
-  const data=req.body
-  const {email,lname}=data
+app.post('/send-email', (req, res) => {
+  const data = req.body
+  const { email, lname } = data
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -106,7 +106,7 @@ app.post('/send-email',(req,res)=>{
     },
   });
 
-  async function main(email,lname) {
+  async function main(email, lname) {
     // send mail with defined transport object
     const info = await transporter.sendMail({
       from: '"Mathi Bike and Car Services" <mathiyalaganm118@gmail.com>', // sender address
@@ -114,27 +114,27 @@ app.post('/send-email',(req,res)=>{
       subject: "Logged in succesfully", // Subject line
       text: `Hello ${lname}.Welcome to Mathi Bike and car services`, // plain text body
     });
-  
+
     console.log("Message sent: %s", info.messageId);
   }
-    main(email,lname).catch(console.error);
+  main(email, lname).catch(console.error);
 })
 
-app.post('/book',(req,res)=>{
-  const bookingData=req.body;
-  const{number,date,selectedOption,email}=bookingData
+app.post('/book', (req, res) => {
+  const bookingData = req.body;
+  const { number, date, selectedOption, email } = bookingData
 
-  const book=new Book({
-    number:number,
-    date:date,
-    selectedOption:selectedOption,
-    email:email
+  const book = new Book({
+    number: number,
+    date: date,
+    selectedOption: selectedOption,
+    email: email
   })
-  
+
   book.save()
-  .then((result)=>console.log(result))
-  .catch((err)=>console.log(err))
-      
+    .then((result) => console.log(result))
+    .catch((err) => console.log(err))
+
 
 
   const transporter = nodemailer.createTransport({
@@ -148,7 +148,7 @@ app.post('/book',(req,res)=>{
     },
   });
 
-  async function main(number,date,selectedOption,email) {
+  async function main(number, date, selectedOption, email) {
     // send mail with defined transport object
     const info = await transporter.sendMail({
       from: '"Mathi Bike and Car Services" <mathiyalaganm118@gmail.com>', // sender address
@@ -156,28 +156,28 @@ app.post('/book',(req,res)=>{
       subject: "Confimation of booking", // Subject line
       text: `Your booking for the service ${selectedOption} for bike number:${number} will be completed before ${date}.Thank you! `, // plain text body
     });
-  
+
     console.log("Message sent: %s", info.messageId);
   }
-    main(number,date,selectedOption,email).catch(console.error);
+  main(number, date, selectedOption, email).catch(console.error);
 })
 
-app.post('/delete',(req,res)=>{
-   const id=req.body;
-   console.log(id)
- 
-   Book.findByIdAndDelete(id.id)
-       .then((result)=>console.log("Document deleted"))
-       .catch((err)=>console.log(err))
+app.post('/delete', (req, res) => {
+  const id = req.body;
+  console.log(id)
+
+  Book.findByIdAndDelete(id.id)
+    .then((result) => console.log("Document deleted"))
+    .catch((err) => console.log(err))
 })
 
-app.get('/get-admin',async(req,res)=>{
-  try{
-    const data= await admin.find()
+app.get('/get-admin', async (req, res) => {
+  try {
+    const data = await admin.find()
     res.send(data)
   }
-  catch(err){
-    console.log(err);
+  catch (error) {
+    console.log(error);
   }
 
 })
